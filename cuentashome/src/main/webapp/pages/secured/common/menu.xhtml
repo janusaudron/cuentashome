@@ -1,0 +1,30 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jstl/core"
+                xmlns:sec="http://www.springframework.org/security/facelets/tags">
+    <h:form>
+        <p:menubar>
+            <p:submenu label="#{msg['menu.infraestructura']}" icon="pi pi-fw pi-file">
+                <p:menuitem value="#{msg['menu.consultar']}" outcome="infraestructura" icon="pi pi-fw pi-list"/>
+                <p:divider />
+                <p:menuitem value="#{msg['menu.cargue']}" icon="pi pi-fw pi-file" outcome="cargueInfraestructura"/>
+            </p:submenu>
+            <p:submenu label="#{msg['menu.proyectos']}" icon="pi pi-fw pi-file">
+                <p:menuitem value="#{msg['menu.consultar']}" icon="pi pi-fw pi-list" outcome="proyectoRadicado"/>
+                <p:menuitem value="#{msg['menu.proyectos.gestion']}" icon="pi pi-fw pi-table" outcome="gestionProyectos"/>
+                <p:menuitem value="#{msg['menu.proyectos.actualizacion.estado']}" icon="pi pi-fw pi-check-square" outcome="actualizacionEstadoProyectos"/>
+                <p:divider />
+                <p:menuitem value="#{msg['menu.cargue']}" icon="pi pi-fw pi-file" outcome="cargueProyectos"/>
+            </p:submenu>
+            <p:submenu label="#{msg['menu.parametros']}" icon="pi pi-fw pi-file">
+                <p:menuitem value="#{msg['menu.refrescar']}" outcome="refrescarParametros" icon="pi pi-fw pi-refresh"/>
+            </p:submenu>
+            <f:facet name="options">
+                <p:commandButton value="Logout" action="#{logoutBB.logout}" icon="pi pi-fw pi-sign-out" styleClass="ui-button-info" ajax="false"/>
+            </f:facet>
+        </p:menubar>
+    </h:form>
+</ui:composition>

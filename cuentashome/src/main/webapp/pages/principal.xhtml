@@ -1,0 +1,191 @@
+<ui:composition template="/pages/template/base.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:define name="titulo">
+		<h:outputText value="#{msg['aplicacion.titulo']}" />
+	</ui:define>
+
+	<ui:define name="body">
+		<div align="center" class="centerCard">
+			<h:form id="principalForm">
+				<p:panelGrid columns="1" layout="grid">
+					<p:panelGrid columns="4">
+						<p:outputLabel value="#{msg['mes']}" />
+						<p:selectOneMenu value="#{cuentaBB.mes}">
+							<f:selectItem itemLabel="Enero" itemValue="1" />
+							<f:selectItem itemLabel="Febrero" itemValue="2" />
+							<f:selectItem itemLabel="Marzo" itemValue="3" />
+							<f:selectItem itemLabel="Abril" itemValue="4" />
+							<f:selectItem itemLabel="Mayo" itemValue="5" />
+							<f:selectItem itemLabel="Junio" itemValue="6" />
+							<f:selectItem itemLabel="Julio" itemValue="7" />
+							<f:selectItem itemLabel="Agosto" itemValue="8" />
+							<f:selectItem itemLabel="Septiembre" itemValue="9" />
+							<f:selectItem itemLabel="Octubre" itemValue="10" />
+							<f:selectItem itemLabel="Noviembre" itemValue="11" />
+							<f:selectItem itemLabel="Diciembre" itemValue="12" />
+							<p:ajax listener="#{cuentaBB.consultar}" update="@form" />
+						</p:selectOneMenu>
+
+						<p:outputLabel value="#{msg['anio']}" />
+						<p:selectOneMenu value="#{cuentaBB.anio}">
+							<f:selectItem itemLabel="2024" itemValue="2024" />
+							<f:selectItem itemLabel="2025" itemValue="2025" />
+							<f:selectItem itemLabel="2026" itemValue="2026" />
+							<f:selectItem itemLabel="2027" itemValue="2027" />
+							<f:selectItem itemLabel="2028" itemValue="2028" />
+							<f:selectItem itemLabel="2029" itemValue="2029" />
+							<f:selectItem itemLabel="2030" itemValue="2030" />
+
+							<p:ajax listener="#{cuentaBB.consultar}" update="@form" />
+						</p:selectOneMenu>
+					</p:panelGrid>
+				</p:panelGrid>
+
+				<p:accordionPanel>
+            		<p:tab title="#{msg['vistageneral']}">
+						<p:panelGrid columns="5">
+						<h:outputText value="#{msg['leidi']}" styleClass="header1" />
+						<h:outputText value="#{cuentaBB.detalle.leidi}">
+							<f:convertNumber currencySymbol="$" type="currency" maxFractionDigits="0" />
+						</h:outputText>
+						<h:outputText value="#{msg['oscar']}" styleClass="header1" />
+						<h:outputText value="#{cuentaBB.detalle.oscar}">
+							<f:convertNumber currencySymbol="$" type="currency" maxFractionDigits="0" />
+						</h:outputText>
+						<h:outputText value="#{cuentaBB.detalle.mensaje}" styleClass="header2" />
+					</p:panelGrid>
+            		</p:tab>
+				</p:accordionPanel>
+				<p:toolbar>
+					<p:toolbarGroup>
+						<p:commandButton value="#{msg['nuevogasto']}" icon="pi pi-plus"
+							actionListener="#{cuentaBB.irCrear}" update=":dialogs:gastoPanel"
+							oncomplete="PF('gastoDialog').show()" styleClass="ui-button-success"
+							style="margin-right: .5rem">
+							<p:resetInput target=":dialogs:gastoPanel" />
+						</p:commandButton>
+						<p:button value="#{msg['cargue']}" styleClass="ui-button-success" style="margin-right: .5rem" outcome="/pages/subirArchivo.html" />
+						<p:commandButton icon="pi pi-chart-pie" update=":dialogs:reportPanel" actionListener="#{cuentaBB.irReporte}"
+							oncomplete="PF('reportDialog').show()" styleClass="ui-button-success"
+							style="margin-right: .5rem">
+							<p:resetInput target=":dialogs:reportPanel" />
+						</p:commandButton>
+						
+					</p:toolbarGroup>
+				</p:toolbar>
+
+				<p:dataTable id="dt-gastos" widgetVar="dtGastos" var="gasto" value="#{cuentaBB.gastos}" reflow="true"
+					styleClass="products-table" rowKey="#{product.id}" paginator="true" rows="20" selectionRowMode="add"
+					paginatorPosition="bottom">
+					<f:facet name="header">
+						<div class="products-table-header">
+							<span style="font-weight: bold">#{msg['gastosM']}</span>
+							<span class="filter-container ui-input-icon-left"> <i class="pi pi-search"></i>
+								<p:inputText id="globalFilter" onkeyup="PF('dtGastos').filter()"
+									placeholder="#{msg['buscar']}" />
+							</span>
+						</div>
+					</f:facet>
+
+
+					<p:column headerText="#{msg['nombre']}">
+						<h:outputText value="#{gasto.nombre}" />
+					</p:column>
+					<p:column headerText="#{msg['valor']}">
+						<h:outputText value="#{gasto.valor}">
+							<f:convertNumber currencySymbol="$" type="currency" maxFractionDigits="0" />
+						</h:outputText>
+					</p:column>
+					<p:column headerText="#{msg['responsable']}">
+						<h:outputText value="#{gasto.responsable}" />
+					</p:column>
+					<p:column exportable="false" ariaHeaderText="Actions">
+						<p:commandButton icon="pi pi-pencil" update=":dialogs:gastoPanel"
+							oncomplete="PF('gastoDialog').show()"
+							styleClass="edit-button rounded-button ui-button-success" process="@this">
+							<f:setPropertyActionListener value="#{gasto}" target="#{cuentaBB.gasto}" />
+							<p:resetInput target=":dialogs:gastoPanel" />
+						</p:commandButton>
+						<p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+							oncomplete="PF('borrarDialog').show()">
+							<f:setPropertyActionListener value="#{gasto}" target="#{cuentaBB.gasto}" />
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+			</h:form>
+
+			<h:form id="dialogs">
+				<p:dialog header="#{msg['gasto']}" showEffect="fade" modal="true" widgetVar="gastoDialog"
+					responsive="true">
+					<p:outputPanel id="gastoPanel" class="ui-fluid">
+						<p:outputPanel rendered="#{not empty cuentaBB.gasto}">
+							<div class="field">
+								<p:outputLabel for="@next" value="#{msg['nombre']}" />
+								<p:autoComplete id="name" minQueryLength="3" value="#{cuentaBB.gasto.nombre}"
+									completeMethod="#{cuentaBB.completarGasto}" effect="fade" scrollHeight="250"
+									required="true" cache="true">
+									<p:ajax listener="#{cuentaBB.seleccionarGasto}"
+										update=":dialogs:valor :dialogs:categoria" />
+								</p:autoComplete>
+							</div>
+							<div class="field">
+								<p:outputLabel for="@next" value="#{msg['valor']}" />
+								<p:inputNumber id="valor" value="#{cuentaBB.gasto.valor}" decimalPlaces="0" modifyValueOnWheel="false"
+									required="true" />
+							</div>
+							<div class="field">
+								<p:outputLabel for="@next" value="#{msg['categoria']}" />
+								<p:selectOneMenu id="categoria" value="#{cuentaBB.gasto.categoria.id}" required="true">
+									<f:selectItem itemLabel="#{msg['seleccione']}" itemValue="#{null}"
+										noSelectionOption="true" />
+									<f:selectItems value="#{cuentaBB.categorias}" var="item" itemLabel="#{item.nombre}"
+										itemValue="#{item.id}" />
+								</p:selectOneMenu>
+							</div>
+							<div class="field">
+								<p:outputLabel for="@next" value="#{msg['responsable']}" />
+								<p:selectOneButton id="responsable" value="#{cuentaBB.gasto.responsable}">
+									<f:selectItem itemLabel="#{msg['leidi']}" itemValue="#{msg['leidi']}" />
+									<f:selectItem itemLabel="#{msg['oscar']}" itemValue="#{msg['oscar']}" />
+								</p:selectOneButton>
+							</div>
+						</p:outputPanel>
+					</p:outputPanel>
+
+					<f:facet name="footer">
+						<p:commandButton value="#{msg['guardar']}" icon="pi pi-check" action="#{cuentaBB.guardar}"
+							update=":principalForm" process="gastoPanel @this" />
+						<p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('gastoDialog').hide()"
+							class="ui-button-secondary" type="button" />
+					</f:facet>
+				</p:dialog>
+
+				<p:confirmDialog widgetVar="borrarDialog" showEffect="fade" width="300"
+					message="#{msg['borrar.confirmacion']}" header="[confirmar]" severity="warn">
+					<p:commandButton value="#{msg['si']}" icon="pi pi-check" actionListener="#{cuentaBB.eliminar}"
+						process="@this" update=":principalForm" oncomplete="PF('borrarDialog').hide()" />
+					<p:commandButton value="#{msg['no']}" type="button" styleClass="ui-button-secondary"
+						icon="pi pi-times" onclick="PF('borrarDialog').hide()" />
+				</p:confirmDialog>
+
+				<p:confirmDialog global="true" showEffect="fade" width="300">
+					<p:commandButton value="#{msg['si']}" type="button" styleClass="ui-confirmdialog-yes"
+						icon="pi pi-check" />
+					<p:commandButton value="#{msg['no']}" type="button"
+						styleClass="ui-confirmdialog-no ui-button-secondary" icon="pi pi-times" />
+				</p:confirmDialog>
+
+				<p:dialog header="#{msg['gasto']}" showEffect="fade" modal="true" widgetVar="reportDialog"
+					responsive="true">
+					<p:outputPanel id="reportPanel" class="ui-fluid">
+						<p:pieChart model="#{cuentaBB.pieModel}" />
+					</p:outputPanel>
+				</p:dialog>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

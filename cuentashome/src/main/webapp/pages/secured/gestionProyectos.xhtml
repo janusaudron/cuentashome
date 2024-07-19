@@ -1,0 +1,179 @@
+ <ui:composition template="/pages/template/base_inside.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:define name="titulo">
+            <h:outputText value="#{msg['poste.ducto.titulo.gestor.proyecto']}" />
+	</ui:define>
+
+	<ui:define name="body">
+		<f:metadata>
+			<f:viewAction action="#{gestionProyectoRadicadoBB.init}" />
+		</f:metadata>
+		<h:form id="panelForm">
+			<p:messages id="formMessages" showDetail="false" closable="true" escape="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p:panelGrid styleClass="centerCard" layout="grid" rendered="#{gestionProyectoRadicadoBB.renderBusqueda}" columns="10">
+                        <p:card rendered="#{gestionProyectoRadicadoBB.renderBusqueda}" styleClass="styleCard1">
+                            <div align="center" styleClass="">
+                                  <p:outputPanel styleClass="centerCardGrid" style="padding: 0.5rem;" >
+                                    <p:outputLabel value="#{msg['poste.ducto.no.radicado']}" for="noRadicado" styleClass="" />
+                                    <p:inputText value="#{gestionProyectoRadicadoBB.filtroConsulta.noRadicado}"  id="noRadicado" required="true" />
+                                    <p:outputLabel value="#{msg['poste.ducto.nombre.proyecto']}" for="nombreProyecto" styleClass="" />
+                                    <p:inputText value="#{gestionProyectoRadicadoBB.filtroConsulta.nombreProyecto}"  id="nombreProyecto"/>
+                                    <p:outputLabel value="#{msg['poste.ducto.regional']}" for="@next" styleClass="" />
+                                    <p:selectOneMenu value="#{gestionProyectoRadicadoBB.filtroConsulta.idRegional}" >
+						<f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{gestionProyectoRadicadoBB.regionalList}" var="regional" itemLabel="#{regional.nombre}" itemValue="#{regional.idRegional}" />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="#{msg['poste.ducto.aliado']}" for="@next" styleClass="" />
+                                    <p:selectOneMenu value="#{gestionProyectoRadicadoBB.filtroConsulta.idAliado}" >
+						<f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{gestionProyectoRadicadoBB.aliadoList}" var="aliado" itemLabel="#{aliado.nombre}" itemValue="#{aliado.idAliado}" />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="#{msg['poste.ducto.estado.radicacion']}" for="@next" styleClass="" />
+                                    <p:selectOneMenu value="#{gestionProyectoRadicadoBB.filtroConsulta.idEstadoRadicacion}" >
+						<f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{gestionProyectoRadicadoBB.estadoRadicacionList}" var="estadoRadicacion" itemLabel="#{estadoRadicacion.nombre}" itemValue="#{estadoRadicacion.idEstadoRadicacion}" />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="#{msg['poste.ducto.electrificadora']}" for="@next" styleClass="" />
+                                    <p:selectOneMenu value="#{gestionProyectoRadicadoBB.filtroConsulta.idElectrificadora}">
+						<f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{gestionProyectoRadicadoBB.electrificadoraList}" var="electrificadora" itemLabel="#{electrificadora.nombre}" itemValue="#{electrificadora.idElectrificadora}" />
+                                    </p:selectOneMenu>
+				</p:outputPanel>  
+                            <p:outputPanel styleClass="centerCard" >
+                                <p:commandButton id="consultaButton" icon="pi pi-search" styleClass="ui-button-success" ajax="false"
+                                    value="#{msg['poste.ducto.accion.consultar.detalle']}" action="#{gestionProyectoRadicadoBB.consultarGestorProyectosRadicados()}" update="panelTables" />
+                            </p:outputPanel>
+                            </div>
+                            </p:card>
+			</p:panelGrid>
+                  </h:form>
+         
+            <h:form id="panelTables">
+                <p:dataTable id="dtDucto" var="ductos" value="#{gestionProyectoRadicadoBB.ductos}" style="width : 100%" reflow="true" emptyMessage="#{msg['aplicacion.registrosNoEncontrados']}"
+                         paginatorAlwaysVisible="false"  styleClass="" rowKey="#{ductos.codProyecto}" paginator="true" rows="#{gestionProyectoRadicadoBB.registrosPorPagina}" first="#{gestionProyectoRadicadoBB.pagina}"
+                    paginatorPosition="top" >
+                    <f:facet name="header">
+                        <div align="center">
+                        <h2>Ductos</h2>
+                           <p:commandButton id="descargaButtonDuctoCsv" icon="pi pi-download" class="ui-button-success" style="margin-left: 5px;" 
+                          value="#{msg['poste.ducto.proyecto.descargar.csv']}">
+                               <p:dataExporter type="csv" target="dtDucto" fileName="resumenDuctoCSV" />
+                          </p:commandButton>
+                        <p:commandButton id="descargaButtonDuctoXlsx" icon="pi pi-download" class="ui-button-success" style="margin-left: 5px;" 
+                            value="#{msg['poste.ducto.proyecto.descargar.xlsx']}">
+                             <p:dataExporter type="xlsxstream" target="dtDucto" fileName="resumenDuctoXLSX" />
+                        </p:commandButton>
+                        </div>
+                    </f:facet>
+                    <p:column headerText="#{msg['poste.ducto.codProyecto']}" styleClass="colDt">
+                    <p:outputLabel value="#{ductos.codProyecto}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['poste.ducto.nombreProyecto']}" styleClass="colDt">
+                    <p:outputLabel value="#{ductos.nombreProyecto}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['poste.ducto.sumLongTramo']}" styleClass="colDt">
+                    <p:outputLabel value="#{ductos.sumLongTramo}" styleClass="fw" />
+                    </p:column>
+            </p:dataTable>
+           
+            
+		
+            <p:dataTable id="dtPoste" var="postes" value="#{gestionProyectoRadicadoBB.postes}" style="width : 100%" reflow="true" emptyMessage="#{msg['aplicacion.registrosNoEncontrados']}"
+                    paginatorAlwaysVisible="false"  styleClass="" rowKey="#{postes.codProyecto}" paginator="true" rows="#{gestionProyectoRadicadoBB.registrosPorPagina}" first="#{gestionProyectoRadicadoBB.pagina}"
+                     paginatorPosition="top" sortBy="#{postes.codProyecto}">
+                    <f:facet name="header">
+                        <div align="center">
+                        <h2>Postes</h2>
+                             <p:commandButton id="descargaButtonPosteCsv" icon="pi pi-download" class="ui-button-success" style="margin-left: 5px;" 
+                                  value="#{msg['poste.ducto.proyecto.descargar.csv']}" ajax="false" >
+                                <p:dataExporter type="csv" target="dtPoste" fileName="resumenPosteCSV" />
+                              </p:commandButton>
+                              <p:commandButton id="descargaButtonPosteXlsx" icon="pi pi-download" class="ui-button-success"
+                                    value="#{msg['poste.ducto.proyecto.descargar.xlsx']}" ajax="false" style="margin-left: 5px;" >
+                                     <p:dataExporter type="xlsxstream" target="dtPoste" fileName="resumenPosteXLSX" />
+                              </p:commandButton>
+                        </div>
+                    </f:facet>
+                    <p:column headerText="#{msg['poste.ducto.codProyecto']}" styleClass="colDt">
+                            <p:outputLabel value="#{postes.codProyecto}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['poste.ducto.nombreProyecto']}" styleClass="colDt">
+                            <p:outputLabel value="#{postes.nombreProyecto}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['poste.ducto.poste8']}" styleClass="colDt">
+                            <p:outputLabel value="#{postes.postes8}" styleClass="fw" />
+                    </p:column>
+                            <p:column headerText="#{msg['poste.ducto.poste10']}" styleClass="colDt">
+                            <p:outputLabel value="#{postes.postes10}" styleClass="fw" />
+                    </p:column>
+                            <p:column headerText="#{msg['poste.ducto.poste12']}" styleClass="colDt">
+                            <p:outputLabel value="#{postes.postes12}" styleClass="fw" />
+                    </p:column>
+             </p:dataTable>
+           
+            <h:panelGroup layout="block" styleClass="centerTable">
+                
+                <p:dataTable id="dtProyectoRadicado" var="proyectoRadicado" value="#{gestionProyectoRadicadoBB.detallesProyectoRadicado}" style="width : 100%" reflow="true" emptyMessage="#{msg['aplicacion.registrosNoEncontrados']}"
+                             paginatorAlwaysVisible="false" styleClass="" rowKey="#{proyectoRadicado.noRadicacion}" paginator="true" rows="#{gestionProyectoRadicadoBB.registrosPorPagina}" first="#{gestionProyectoRadicadoBB.pagina}"
+                    paginatorPosition="top" sortBy="#{proyectoRadicado.noRadicacion}" >
+                    <f:facet name="header">
+                        <div align="center" styleClass="alignTittleAndButton">
+                              <h2>Proyecto Radicado</h2>
+                              <p:commandButton id="descargaButtonProyectoRadicadoCsv" icon="pi pi-download" class="ui-button-success" style="margin-left: 5px;" 
+                              value="#{msg['poste.ducto.proyecto.descargar.csv']}" ajax="false" >
+                                   <p:dataExporter type="csv" target="dtProyectoRadicado" fileName="resumenProyectoRadicadoCSV" />
+                              </p:commandButton>
+                             <p:commandButton id="descargaButtonProyectoRadicadoXlsx" icon="pi pi-download" class="ui-button-success" style="margin-left: 5px;" 
+                                    value="#{msg['poste.ducto.proyecto.descargar.xlsx']}" ajax="false" >
+                                     <p:dataExporter type="xlsxstream" target="dtProyectoRadicado" fileName="resumenProyectoRadicadoXLSX" />
+                              </p:commandButton>
+                        </div>
+                    </f:facet>
+                    <p:column headerText="#{msg['poste.ducto.proyecto.detalle.no.radicado']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicado.noRadicacion}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['poste.ducto.proyecto.detalle.electrificadora']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicado.electrificadora}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['poste.ducto.proyecto.detalle.nombre']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicado.nombre}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['poste.ducto.proyecto.detalle.direccion']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicado.direccion}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['poste.ducto.proyecto.detalle.cantidad.postes']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicado.cantPostes}" styleClass="fw"/>
+                    </p:column>
+                    <p:column headerText="#{msg['poste.ducto.proyecto.detalle.cantidad.ductos']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicado.cantDuctos}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['poste.ducto.proyecto.detalle.cantidad.postes.nuevos']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicado.cantPostesNuevos}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['poste.ducto.proyecto.detalle.cantidad.ductos.nuevos']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicado.cantDuctosNuevos}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['poste.ducto.proyecto.detalle.cantidad.postes.arriendo']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicado.cantPostesArriendo}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['poste.ducto.proyecto.detalle.cantidad.ductos.arriendo']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicado.cantDuctosArriendo}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['poste.ducto.proyecto.detalle.cantidad.postes.desmontables']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicado.cantPostesDesmontables}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['poste.ducto.proyecto.detalle.cantidad.ductos.desmontables']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicado.cantDuctosDesmontables}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['poste.ducto.proyecto.detalle.fecha.radicacion']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicado.fechaRadicacion}" styleClass="fw" />
+                    </p:column>
+             </p:dataTable>	 
+            </h:panelGroup>   
+         </h:form>
+	</ui:define>
+</ui:composition>

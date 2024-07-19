@@ -1,0 +1,42 @@
+ <ui:composition template="/pages/template/base_inside.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:define name="titulo">
+            <h:outputText value="#{msg['poste.ducto.titulo.actualizar.estado']}" />
+	</ui:define>
+
+	<ui:define name="body">
+		<f:metadata>
+			<f:viewAction action="#{gestionProyectoRadicadoBB.init}" />
+		</f:metadata>
+		<h:form id="panelForm">
+			<p:messages id="formMessages" showDetail="false" closable="true" escape="false">
+				<p:autoUpdate />
+			</p:messages>
+			<p:panelGrid styleClass="centerCard" layout="grid" rendered="#{gestionProyectoRadicadoBB.renderBusqueda}" columns="10">
+                        <p:card rendered="#{gestionProyectoRadicadoBB.renderBusqueda}" styleClass="styleCard1">
+                            <div align="center" styleClass="">
+                                  <p:outputPanel styleClass="centerCardGridActualizar" style="padding: 0.5rem;" >
+                                    <p:outputLabel value="#{msg['poste.ducto.no.radicado']}" for="noRadicado" styleClass="" />
+                                    <p:inputText value="#{gestionProyectoRadicadoBB.noRadicado}"  id="noRadicado" required="true" />
+                                    <p:outputLabel value="#{msg['poste.ducto.proyecto.estado']}" for="@next" styleClass="" />
+                                     <p:selectOneMenu value="#{gestionProyectoRadicadoBB.idEstado}" required="true">
+						<f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                                                <f:selectItems value="#{gestionProyectoRadicadoBB.estadoRadicacionList}" var="estadoRadicado" itemLabel="#{estadoRadicado.nombre}" itemValue="#{estadoRadicado.idEstadoRadicacion}" />
+                                    </p:selectOneMenu>
+                                    <p:outputLabel value="#{msg['poste.ducto.proyecto.fecha.estado']}" for="@next" styleClass="" />
+                                    <p:calendar id="popup" value="#{gestionProyectoRadicadoBB.fechaCambioEstado}" required="true"/>
+				</p:outputPanel>  
+                            <p:outputPanel styleClass="centerCard" >
+                                <p:commandButton id="consultaButton" icon="pi pi-search" styleClass="ui-button-success"
+                                    value="#{msg['poste.ducto.accion.actualizar.estado']}" action="#{gestionProyectoRadicadoBB.actualizarEstadoProyectoRadicado()}" update="panelForm" />
+                              
+                            </p:outputPanel>
+                            </div>
+                            </p:card>
+			</p:panelGrid>
+                    </h:form>       
+            
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,282 @@
+<ui:composition template="/pages/template/base_inside.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jstl/core">
+
+    <ui:define name="titulo">
+        <h:outputText value="#{msg['infraestructura.titulo']}" />
+    </ui:define>
+
+    <ui:define name="body">
+        <f:metadata>
+            <f:viewAction action="#{infraestructuraBB.init}" />
+        </f:metadata>
+        <h:form id="panelForm">
+            <p:messages id="formMessages" showDetail="false" closable="true" escape="false">
+                <p:autoUpdate />
+            </p:messages>
+
+            <p:card>
+                <p:panelGrid columns="7" layout="grid">
+                    <p:outputLabel value="#{msg['infraestructura.electrificadora']}" for="@next" />
+                    <p:selectOneMenu value="#{infraestructuraBB.infraConsulta.idElectrificadora}" required="true">
+                        <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                        <f:selectItems value="#{infraestructuraBB.electrificadoras}" var="item" itemLabel="#{item.nombre}" itemValue="#{item.idElectrificadora}" />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="#{msg['infraestructura.localidad']}" for="@next" />
+                    <p:selectOneMenu id="advanced" value="#{infraestructuraBB.infraConsulta.idLocalidad}"
+                                     filter="true" filterMatchMode="contains">
+                        <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                        <f:selectItems value="#{infraestructuraBB.localidades}" var="localidades"
+                                       itemLabel="#{localidades.nombre}" itemValue="#{localidades.idLocalidad}"/>
+                        <p:column>
+                            <f:facet name="header">
+                                <h:outputText value="Nombre"/>
+                            </f:facet>
+                            <h:outputText value="#{localidades.nombre}"/>
+                        </p:column>
+
+                        <f:facet name="footer">
+                            <h:outputText value="#{infraestructuraBB.localidades.size()} Localidades"
+                                          style="font-weight:bold;" styleClass="py-1 block"/>
+                        </f:facet>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="#{msg['infraestructura.tipoBase']}" for="@next" />
+                    <p:selectOneMenu value="#{infraestructuraBB.infraConsulta.idTipoBase}" >
+                        <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                        <f:selectItems value="#{infraestructuraBB.tiposBase}" var="item" itemLabel="#{item.nombre}" itemValue="#{item.idTipoBase}" />
+                    </p:selectOneMenu>
+
+
+                    <p:commandButton value="#{msg['accion.consultar']}" ajax="false"  action="#{infraestructuraBB.consultar}" 
+                                     styleClass="ui-button-success" update="panelForm"/>
+                </p:panelGrid>
+            </p:card>
+
+            <p:card>
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton id="actualizarBoton" value="#{msg['accion.actualizar']}" action="#{infraestructuraBB.irActualizar}" icon="pi pi-pencil" process="@this" update="dialogo"
+                                         oncomplete="PF('dialogoWidget').show();" styleClass="ui-button-success mr-05" disabled="#{!infraestructuraBB.hayRegistrosSeleccionados()}">
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                </p:toolbar>
+                <p:dataTable id="dtTable" var="infra" value="#{infraestructuraBB.infraestructuras}" style="width : 100%" reflow="true" 
+                             paginatorAlwaysVisible="false" styleClass="" paginator="true" paginatorPosition="top" emptyMessage="#{msg['aplicacion.registrosNoEncontrados']}"
+                             selectionPageOnly="false" rowSelectMode="none" rowKey="#{infra.idUnicoBase}" selection="#{infraestructuraBB.registroSeleccionados}">
+                    <f:facet name="header">
+                        Infraestructura
+                    </f:facet>
+
+                    <p:ajax event="rowSelect" update=":panelForm:actualizarBoton" />
+                    <p:ajax event="rowUnselect" update=":panelForm:actualizarBoton" />
+                    <p:ajax event="rowSelectCheckbox" update=":panelForm:actualizarBoton" />
+                    <p:ajax event="rowUnselectCheckbox" update=":panelForm:actualizarBoton" />
+                    <p:ajax event="toggleSelect" update=":panelForm:actualizarBoton" />
+
+                    <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                    <p:column headerText="#{msg['infraestructura.electrificadora']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.electrificadora}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.tipo']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.tipo}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.direccionPf1']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.direccionPf1}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.pf1']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.pf1}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.coorx1']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.coorx1}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.pf2']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.pf1}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.coorx2']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.coorx2}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.mt']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.mt}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.bt']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.bt}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.ap']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.ap}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.alturaPoste']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.alturaPoste}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.longTramo']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.longTramo}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.localidad']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.localidad}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.barrio']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.barrio}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.numeroCables']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.numeroCables}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.numeroReservas']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.numeroReserva}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.elementoPasivo']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.numeroElementoPasivo}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.proyectos']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.proyectos}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['infraestructura.tipoBase']}" styleClass="colDt">
+                        <p:outputLabel value="#{infra.tipoBase}" styleClass="fw" />
+                    </p:column>
+                    <!-- 
+                    <p:column exportable="false">
+                                    Boton para poder exportar desde la tabla
+                    <p:commandButton id="notaEmpalme" styleClass="edit-button rounded-button ui-button-success" 
+                                icon="pi pi-eye" oncomplete="PF('ModalNotas').show()" 
+                                    actionListener="#{rutaBB.consultarNotas(empalme.idEmpalme)}" update="empalmeLogList">
+                                    <f:setPropertyActionListener value="#{empalme}" target="#{rutaBB.empalme}" />
+                            </p:commandButton>
+                             <p:tooltip for="notaEmpalme" value="Ver Notas" showEffect="clip" hideEffect="fold" />
+                    </p:column> -->
+                </p:dataTable>
+            </p:card>
+        </h:form>
+
+        <p:dialog header="#{msg['infraestructura.dialogo.titulo']}" widgetVar="dialogoWidget" closable="false" modal="true" showEffect="fade" hideEffect="fade" resizable="false" fitViewport="true" blockScroll="false">
+            <h:form id="dialogo">
+                <p:messages id="dialogMessages" showDetail="false" closable="true" escape="false">
+                    <p:autoUpdate />
+                </p:messages>
+                <p:outputPanel id="panel" style="text-align:center;">
+                    <p:panelGrid columns="3">
+                        <p:outputLabel value="#{msg['infraestructura.columna']}" for="@next" />
+                        <p:selectManyMenu id="columnasSel" value="#{infraestructuraBB.columnasSeleccionadas}"   filter="true" filterMatchMode="contains" showCheckbox="true" style="width:300px;text-align:left;" >
+                            <f:selectItems value="#{infraestructuraBB.columnas}" var="col" itemLabel="#{col}" itemValue="#{col}" />
+                        </p:selectManyMenu>
+                        <p:commandButton value="#{msg['accion.agregar']}" action="#{infraestructuraBB.mostrarColumnas}" icon="fa fa-save" update="panelColumnas" process="@this columnasSel"/>
+                    </p:panelGrid>
+                    <p:panelGrid columns="2" id="panelColumnas">
+                        <p:outputLabel value="#{msg['infraestructura.electrificadora']}" for="@next"  rendered="#{infraestructuraBB.displayColumnas['ELECTRIFICADORA']}" />
+                        <p:selectOneMenu value="#{infraestructuraBB.infraestructura.idElectrificadora}" required="true" rendered="#{infraestructuraBB.displayColumnas['ELECTRIFICADORA']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{infraestructuraBB.electrificadoras}" var="item" itemLabel="#{item.nombre}" itemValue="#{item.idElectrificadora}" />
+                        </p:selectOneMenu>						
+                        <p:outputLabel value="#{msg['infraestructura.tipo']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['TIPO']}" />
+                        <p:selectOneMenu value="#{infraestructuraBB.infraestructura.tipo}" required="true" rendered="#{infraestructuraBB.displayColumnas['TIPO']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemLabel="AEREO" itemValue="AEREO" />
+                            <f:selectItem itemLabel="SUBTERRANEO" itemValue="SUBTERRANEO" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['infraestructura.direccionPf1']}" for="@next"  rendered="#{infraestructuraBB.displayColumnas['DIRECCION PF1']}" />
+                        <p:inputText  value="#{infraestructuraBB.infraestructura.direccionPf1}" required="true" rendered="#{infraestructuraBB.displayColumnas['DIRECCION PF1']}" />
+
+                        <p:outputLabel value="#{msg['infraestructura.pf1']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['PF1']}" />
+                        <p:inputText  value="#{infraestructuraBB.infraestructura.pf1}" required="true" rendered="#{infraestructuraBB.displayColumnas['PF1']}" />
+
+                        <p:outputLabel value="#{msg['infraestructura.coorx1']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['COORX1']}" />
+                        <p:inputText  value="#{infraestructuraBB.infraestructura.coorx1}" required="true" rendered="#{infraestructuraBB.displayColumnas['COORX1']}" />
+
+                        <p:outputLabel value="#{msg['infraestructura.coory1']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['COORY1']}" />
+                        <p:inputText  value="#{infraestructuraBB.infraestructura.coory1}" required="true" rendered="#{infraestructuraBB.displayColumnas['COORY1']}" />
+
+                        <p:outputLabel value="#{msg['infraestructura.pf2']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['PF2']}" />
+                        <p:inputText  value="#{infraestructuraBB.infraestructura.pf2}" required="true" rendered="#{infraestructuraBB.displayColumnas['PF2']}" />
+
+                        <p:outputLabel value="#{msg['infraestructura.coorx2']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['COORX2']}" />
+                        <p:inputText  value="#{infraestructuraBB.infraestructura.coorx2}" required="true" rendered="#{infraestructuraBB.displayColumnas['COORX2']}" />
+
+                        <p:outputLabel value="#{msg['infraestructura.coory2']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['COORY2']}" />
+                        <p:inputText  value="#{infraestructuraBB.infraestructura.coory2}" required="true" rendered="#{infraestructuraBB.displayColumnas['COORY2']}" />
+
+                        <p:outputLabel value="#{msg['infraestructura.mt']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['MT']}" />
+                        <p:selectOneMenu value="#{infraestructuraBB.infraestructura.mt}" required="true" rendered="#{infraestructuraBB.displayColumnas['MT']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemLabel="SI" itemValue="1" />
+                            <f:selectItem itemLabel="NO" itemValue="0" />
+                        </p:selectOneMenu>						
+                        <p:outputLabel value="#{msg['infraestructura.bt']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['BT']}" />
+                        <p:selectOneMenu value="#{infraestructuraBB.infraestructura.bt}" required="true" rendered="#{infraestructuraBB.displayColumnas['BT']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemLabel="SI" itemValue="1" />
+                            <f:selectItem itemLabel="NO" itemValue="0" />
+                        </p:selectOneMenu>						
+                        <p:outputLabel value="#{msg['infraestructura.ap']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['AP']}" />
+                        <p:selectOneMenu value="#{infraestructuraBB.infraestructura.ap}" required="true" rendered="#{infraestructuraBB.displayColumnas['AP']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemLabel="SI" itemValue="1" />
+                            <f:selectItem itemLabel="NO" itemValue="0" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['infraestructura.alturaPoste']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['ALTURA POSTE']}" />
+                        <p:selectOneMenu value="#{infraestructuraBB.infraestructura.alturaPoste}" required="true" rendered="#{infraestructuraBB.displayColumnas['ALTURA POSTE']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemLabel="0" itemValue="0" />
+                            <f:selectItem itemLabel="8" itemValue="8" />
+                            <f:selectItem itemLabel="10" itemValue="10" />
+                            <f:selectItem itemLabel="12" itemValue="12" />
+                            <f:selectItem itemLabel="14" itemValue="14" />
+                            <f:selectItem itemLabel="16" itemValue="16" />
+                            <f:selectItem itemLabel="18" itemValue="18" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['infraestructura.longTramo']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['LONG TRAMO']}" />
+                        <p:inputText  value="#{infraestructuraBB.infraestructura.longTramo}" required="true" rendered="#{infraestructuraBB.displayColumnas['LONG TRAMO']}" />
+
+
+                        <p:outputLabel value="#{msg['infraestructura.localidad']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['LOCALIDAD']}" />
+                        <p:selectOneMenu value="#{infraestructuraBB.infraestructura.idLocalidad}" rendered="#{infraestructuraBB.displayColumnas['LOCALIDAD']}" 
+                                         filter="true" filterMatchMode="contains">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{infraestructuraBB.localidades}" var="localidades"
+                                           itemLabel="#{localidades.nombre}" itemValue="#{localidades.idLocalidad}"/>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre"/>
+                                </f:facet>
+                                <h:outputText value="#{localidades.nombre}"/>
+                            </p:column>
+
+                            <f:facet name="footer">
+                                <h:outputText value="#{infraestructuraBB.localidades.size()} Localidades"
+                                              style="font-weight:bold;" styleClass="py-1 block"/>
+                            </f:facet>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['infraestructura.barrio']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['BARRIO']}" />
+                        <p:inputText  value="#{infraestructuraBB.infraestructura.barrio}" required="true" rendered="#{infraestructuraBB.displayColumnas['BARRIO']}" />
+
+                        <p:outputLabel value="#{msg['infraestructura.numeroCables']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['NUMERO CABLES']}" />
+                        <p:inputText  value="#{infraestructuraBB.infraestructura.numeroCables}" required="true" rendered="#{infraestructuraBB.displayColumnas['NUMERO CABLES']}" />
+
+                        <p:outputLabel value="#{msg['infraestructura.numeroReservas']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['NUMERO RESERVA']}" />
+                        <p:inputText  value="#{infraestructuraBB.infraestructura.numeroReserva}" required="true" rendered="#{infraestructuraBB.displayColumnas['NUMERO RESERVA']}" />
+
+                        <p:outputLabel value="#{msg['infraestructura.elementoPasivo']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['NUMERO ELEMENTO PASIVO']}" />
+                        <p:inputText  value="#{infraestructuraBB.infraestructura.numeroElementoPasivo}" required="true" rendered="#{infraestructuraBB.displayColumnas['NUMERO ELEMENTO PASIVO']}" />
+
+                        <p:outputLabel value="#{msg['infraestructura.proyectos']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['PROYECTOS']}" />
+                        <p:inputText  value="#{infraestructuraBB.infraestructura.proyectos}" required="true" rendered="#{infraestructuraBB.displayColumnas['PROYECTOS']}" />
+
+                        <p:outputLabel value="#{msg['infraestructura.tipoBase']}" for="@next" rendered="#{infraestructuraBB.displayColumnas['TIPO BASE']}" />
+                        <p:selectOneMenu value="#{infraestructuraBB.infraestructura.idTipoBase}" required="true" rendered="#{infraestructuraBB.displayColumnas['TIPO BASE']}" >
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{infraestructuraBB.tiposBase}" var="item" itemLabel="#{item.nombre}" itemValue="#{item.idTipoBase}" />
+                        </p:selectOneMenu>
+
+                    </p:panelGrid>
+                    <p:commandButton value="#{msg['accion.guardar']}" action="#{infraestructuraBB.actualizar}" icon="pi pi-save" update="panelForm" styleClass="ui-button-success"/>
+                    <p:spacer height="12px" />
+                    <p:commandButton value="#{msg['accion.cancelar']}" process="@this" oncomplete="PF('dialogoWidget').hide();" styleClass="ui-button-danger" icon="pi pi-times-circle">
+                        <p:resetInput target="dialogo" />
+                    </p:commandButton>
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

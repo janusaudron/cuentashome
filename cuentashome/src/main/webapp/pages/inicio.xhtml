@@ -1,0 +1,39 @@
+<ui:composition template="/pages/template/base.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:define name="titulo">
+		<h:outputText value="#{msg['aplicacion.titulo']}" />
+	</ui:define>
+
+	<!-- <f:metadata>
+		<f:viewAction action="#{cuentaBB.init}" />
+	</f:metadata> -->
+
+	<ui:define name="body">
+		<f:metadata>
+            <f:viewAction action="#{cuentaBB.init}" />
+        </f:metadata>
+		<div align="center" class="centerCard">
+			<h:form>
+				<p:panelGrid columns="1" layout="grid">
+					<p:panelGrid columns="2" layout="flex">
+						<p:panelGrid columns="1">
+							<h:commandLink action="#{cuentaBB.ingresar('1')}">
+								<img src="#{resource['images/amy.png']}" height="120px" />
+							</h:commandLink>
+							<p:outputLabel value="#{msg['leidi']}" />
+						</p:panelGrid>
+						<p:panelGrid columns="1">
+							<h:commandLink action="#{cuentaBB.ingresar('2')}">
+								<img src="#{resource['images/shadow.png']}" height="120px" />
+							</h:commandLink>
+							<p:outputLabel value="#{msg['oscar']}" />
+						</p:panelGrid>
+					</p:panelGrid>
+				</p:panelGrid>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

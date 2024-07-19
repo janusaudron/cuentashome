@@ -1,0 +1,22 @@
+<ui:composition template="/pages/template/base_inside.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jstl/core">
+
+    <ui:define name="titulo">
+        <h:outputText value="#{msg['refrescar.parametros.titulo']}" />
+    </ui:define>
+
+    <ui:define name="body">
+        <h:form id="panelForm" enctype="multipart/form-data">
+            <p:messages id="formMessages" showDetail="false" closable="true" escape="false">
+                <p:autoUpdate />
+            </p:messages>
+
+            <p:panelGrid styleClass="pg" layout="grid" columns="10">
+                <p:card>
+                    <p:commandButton id="botonRefrescar" value="#{msg['refrescar.parametros.boton']}" action="#{parametroBB.refrescar}" styleClass="ui-button-success" />
+                </p:card>
+            </p:panelGrid>
+        </h:form>
+    </ui:define>
+</ui:composition>

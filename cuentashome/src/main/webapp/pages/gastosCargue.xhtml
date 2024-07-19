@@ -1,0 +1,103 @@
+<ui:composition template="/pages/template/base.xhtml" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets" xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:define name="titulo">
+		<h:outputText value="#{msg['aplicacion.titulo']}" />
+	</ui:define>
+
+	<ui:define name="body">
+		<f:metadata>
+            <f:viewAction action="#{cuentaBB.cargar}" />
+        </f:metadata>
+		<div align="center" class="centerCard">
+			<h:form id="cargadosForm">
+				<p:panelGrid columns="1" layout="grid">
+				
+				<p:dataTable id="dt-gastos" widgetVar="dtGastos" var="gasto" value="#{cuentaBB.gastosCargados}" editable="true" reflow="true"
+					paginator="true" rows="20" selectionRowMode="add" paginatorPosition="bottom">
+					<f:facet name="header">
+						<div>
+							<span style="font-weight: bold">#{msg['gastosM']}</span>
+							<span>
+								<p:commandButton value="#{msg['guardar.gastos']}" action="#{cuentaBB.guardarCargados}" style="margin-right: .5rem" />
+								<p:button outcome="principal" value="#{msg['cancelar']}" />
+							</span>
+						</div>
+					</f:facet>
+
+					<p:column headerText="#{msg['nombre']}">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{gasto.nombre}"/>
+							</f:facet>
+							<f:facet name="input">
+								<p:inputText id="nombre" value="#{gasto.nombre}" style="width:100%" required="true"/>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column headerText="#{msg['valor']}">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{gasto.valor}">
+									<f:convertNumber currencySymbol="$" type="currency" maxFractionDigits="0" />
+								</h:outputText>
+							</f:facet>
+							<f:facet name="input">
+								<p:inputNumber id="valor" value="#{gasto.valor}" decimalPlaces="0" modifyValueOnWheel="false" required="true" />
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column headerText="#{msg['categoria']}">
+						<p:cellEditor>
+							<f:facet name="output">
+								<h:outputText value="#{gasto.categoria.nombre}" />
+							</f:facet>
+							<f:facet name="input">
+								<p:selectOneMenu id="categoria" value="#{gasto.categoria.id}" required="true">
+									<f:selectItems value="#{cuentaBB.categorias}" var="item" itemLabel="#{item.nombre}"
+										itemValue="#{item.id}" />
+										<p:ajax event="itemSelect" listener="#{cuentaBB.cambioCategoriaCargue}" />		
+								</p:selectOneMenu>
+							</f:facet>
+						</p:cellEditor>
+					</p:column>
+					<p:column headerText="#{msg['fecha']}">
+						<h:outputText value="#{gasto.fecha}">
+							<f:convertDateTime pattern="dd/MM/yyyy hh:mm a"/>
+						</h:outputText>
+					</p:column>
+					<p:column exportable="false" ariaHeaderText="Actions" style="width:6rem">
+						<p:rowEditor editTitle="Editar Gasto" cancelTitle="Cancelar" saveTitle="Guardar Gasto"/>
+					</p:column>
+					<p:column exportable="false" ariaHeaderText="Actions" style="width:4rem">
+						<p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+							oncomplete="PF('borrarDialog').show()">
+							<f:setPropertyActionListener value="#{gasto}" target="#{cuentaBB.gasto}" />
+						</p:commandButton>
+					</p:column>
+
+				</p:dataTable>
+				</p:panelGrid>
+			</h:form>
+
+			<h:form id="dialogs">
+				<p:confirmDialog widgetVar="borrarDialog" showEffect="fade" width="300"
+					message="#{msg['borrar.confirmacion']}" header="[confirmar]" severity="warn">
+					<p:commandButton value="#{msg['si']}" icon="pi pi-check" actionListener="#{cuentaBB.eliminarCargado}"
+						process="@this" update="cargadosForm" oncomplete="PF('borrarDialog').hide()" />
+					<p:commandButton value="#{msg['no']}" type="button" styleClass="ui-button-secondary"
+						icon="pi pi-times" onclick="PF('borrarDialog').hide()" />
+				</p:confirmDialog>
+
+				<p:confirmDialog global="true" showEffect="fade" width="300">
+					<p:commandButton value="#{msg['si']}" type="button" styleClass="ui-confirmdialog-yes"
+						icon="pi pi-check" />
+					<p:commandButton value="#{msg['no']}" type="button"
+						styleClass="ui-confirmdialog-no ui-button-secondary" icon="pi pi-times" />
+				</p:confirmDialog>
+			</h:form>
+		</div>
+	</ui:define>
+</ui:composition>

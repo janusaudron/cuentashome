@@ -1,0 +1,357 @@
+<ui:composition template="/pages/template/base_inside.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:c="http://java.sun.com/jstl/core">
+
+    <ui:define name="titulo">
+        <h:outputText value="#{msg['proyecto.radicado.titulo']}" />
+    </ui:define>
+
+    <ui:define name="body">
+        <f:metadata>
+            <f:viewAction action="#{proyectoRadicadoBB.init}" />
+        </f:metadata>
+        <h:form id="panelForm">
+            <p:messages id="formMessages" showDetail="false" closable="true" escape="false">
+                <p:autoUpdate />
+            </p:messages>
+
+            <p:card>
+                <p:panelGrid columns="6" layout="grid">
+                    <p:outputLabel value="#{msg['poste.ducto.no.radicado']}" for="noRadicado" styleClass="" />
+                    <p:inputText value="#{proyectoRadicadoBB.filtroConsulta.noRadicado}"  id="noRadicado" required="true" />
+                    <p:outputLabel value="#{msg['poste.ducto.nombre.proyecto']}" for="nombreProyecto" styleClass="" />
+                    <p:inputText value="#{proyectoRadicadoBB.filtroConsulta.nombreProyecto}"  id="nombreProyecto"/>
+                    <p:outputLabel value="#{msg['poste.ducto.regional']}" for="@next" styleClass="" />
+                    <p:selectOneMenu value="#{proyectoRadicadoBB.filtroConsulta.idRegional}"> 
+                        <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                        <f:selectItems value="#{proyectoRadicadoBB.regional}" var="regional" itemLabel="#{regional.nombre}" itemValue="#{regional.idRegional}" />
+                    </p:selectOneMenu>
+                    <p:outputLabel value="#{msg['poste.ducto.aliado']}" for="@next" styleClass="" />
+                    <p:selectOneMenu value="#{proyectoRadicadoBB.filtroConsulta.idAliado}" >
+                        <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                        <f:selectItems value="#{proyectoRadicadoBB.aliado}" var="aliado" itemLabel="#{aliado.nombre}" itemValue="#{aliado.idAliado}" />
+                    </p:selectOneMenu>
+                    <p:outputLabel value="#{msg['poste.ducto.estado.radicacion']}" for="@next" styleClass="" />
+                    <p:selectOneMenu value="#{proyectoRadicadoBB.filtroConsulta.idEstadoRadicacion}" >
+                        <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                        <f:selectItems value="#{proyectoRadicadoBB.estadoRadicacion}" var="estadoRadicacion" itemLabel="#{estadoRadicacion.nombre}" itemValue="#{estadoRadicacion.idEstadoRadicacion}" />
+                    </p:selectOneMenu>
+                    <p:outputLabel value="#{msg['poste.ducto.electrificadora']}" for="@next" styleClass="" />
+                    <p:selectOneMenu value="#{proyectoRadicadoBB.filtroConsulta.idElectrificadora}" >
+                        <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                        <f:selectItems value="#{proyectoRadicadoBB.electrificadoras}" var="electrificadora" itemLabel="#{electrificadora.nombre}" itemValue="#{electrificadora.idElectrificadora}" />
+                    </p:selectOneMenu>
+                    <p:commandButton icon="pi pi-search" class="ui-button-success" ajax="false"
+                                     value="#{msg['accion.consultar']}" action="#{proyectoRadicadoBB.consultar()}" update="panelForm" />
+                </p:panelGrid>
+            </p:card>
+
+            <p:card>
+                <p:toolbar>
+                    <p:toolbarGroup>
+                        <p:commandButton id="actualizarBoton" value="#{msg['accion.actualizar']}" action="#{proyectoRadicadoBB.irActualizar}" icon="pi pi-pencil" process="@this" update="dialogo"
+                                         oncomplete="PF('dialogoWidget').show();" styleClass="ui-button-success mr-05" disabled="#{!proyectoRadicadoBB.hayRegistrosSeleccionados()}">
+                        </p:commandButton>
+                    </p:toolbarGroup>
+                </p:toolbar>
+                <p:dataTable id="dtTable" var="proyectoRadicados" value="#{proyectoRadicadoBB.proyectoRadicadosConsulta}" style="width : 100%" reflow="true" 
+                             paginatorAlwaysVisible="false" styleClass="" paginator="true" paginatorPosition="top" emptyMessage="#{msg['aplicacion.registrosNoEncontrados']}"
+                             selectionPageOnly="false" rowSelectMode="none" rowKey="#{proyectoRadicados.idUnicoBase}" selection="#{proyectoRadicadoBB.registroSeleccionados}">
+                    <f:facet name="header">
+                        Proyecto Radicado
+                    </f:facet>
+
+                    <p:ajax event="rowSelect" update=":panelForm:actualizarBoton" />
+                    <p:ajax event="rowUnselect" update=":panelForm:actualizarBoton" />
+                    <p:ajax event="rowSelectCheckbox" update=":panelForm:actualizarBoton" />
+                    <p:ajax event="rowUnselectCheckbox" update=":panelForm:actualizarBoton" />
+                    <p:ajax event="toggleSelect" update=":panelForm:actualizarBoton" />
+
+                    <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                    <p:column headerText="#{msg['proyecto.radicado.numero.radicado']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicados.noRadicado}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['proyecto.radicado.nombre.proyecto']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicados.nombreProyecto}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['proyecto.radicado.regional']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicados.regional}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['proyecto.radicado.fecha.creacion']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicados.fechaCreacion}" styleClass="fw" >
+                            <f:convertDateTime pattern="dd/MM/yyyy hh:mm a"/>
+                        </p:outputLabel>
+                    </p:column>
+                    <p:column headerText="#{msg['proyecto.radicado.fecha.radicacion']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicados.fechaRadicacion}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['proyecto.radicado.tipo.proyecto']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicados.tipoProyecto}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['proyecto.radicado.cliente.interno']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicados.clienteInterno}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['proyecto.radicado.direccion.cliente']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicados.direccionCliente}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['proyecto.radicado.numero.ot']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicados.numeroOt}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['proyecto.radicado.fecha.creacion.ot']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicados.fechaCreacionOt}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['proyecto.radicado.fecha.estimada.respuesta']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicados.fechaEstiamadaRespuesta}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['proyecto.radicado.radicado.por']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicados.radicadoPor}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['proyecto.radicado.aliado']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicados.aliado}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['proyecto.radicado.electrificadora']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicados.electrificadora}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['proyecto.radicado.tipo']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicados.tipo}" styleClass="fw" />
+                    </p:column>
+                    <p:column headerText="#{msg['proyecto.radicado.direccion.pf1']}" styleClass="colDt">
+                        <p:outputLabel value="#{proyectoRadicados.direccionPf1}" styleClass="fw" />
+                    </p:column>
+                    <!-- 
+                    <p:column exportable="false">
+                                    Boton para poder exportar desde la tabla
+                    <p:commandButton id="notaEmpalme" styleClass="edit-button rounded-button ui-button-success" 
+                                icon="pi pi-eye" oncomplete="PF('ModalNotas').show()" 
+                                    actionListener="#{rutaBB.consultarNotas(empalme.idEmpalme)}" update="empalmeLogList">
+                                    <f:setPropertyActionListener value="#{empalme}" target="#{rutaBB.empalme}" />
+                            </p:commandButton>
+                             <p:tooltip for="notaEmpalme" value="Ver Notas" showEffect="clip" hideEffect="fold" />
+                    </p:column> -->
+                </p:dataTable>
+            </p:card>
+        </h:form>
+
+        <p:dialog header="#{msg['proyecto.radicado.dialogo.titulo']}" widgetVar="dialogoWidget" closable="false" modal="true" showEffect="fade" hideEffect="fade" resizable="false" fitViewport="true" blockScroll="false">
+            <h:form id="dialogo">
+                <p:messages id="dialogMessages" showDetail="false" closable="true" escape="false">
+                    <p:autoUpdate />
+                </p:messages>
+                <p:outputPanel id="panel" style="text-align:center;">
+                    <p:panelGrid columns="4">
+                        <p:outputLabel value="#{msg['proyecto.radicado.columna']}" for="@next" />
+                        <p:selectManyMenu id="columnasSel" value="#{proyectoRadicadoBB.columnasSeleccionadas}"   filter="true" filterMatchMode="contains" showCheckbox="true" style="width:800px;text-align:left;" >
+                            <f:selectItems value="#{proyectoRadicadoBB.columnas}" var="col" itemLabel="#{col}" itemValue="#{col}" />
+                        </p:selectManyMenu>
+                        <p:commandButton value="#{msg['accion.agregar']}" action="#{proyectoRadicadoBB.mostrarColumnas}" icon="fa fa-save" update="panelColumnas" process="@this columnasSel"/>
+                    </p:panelGrid>
+                    <p:panelGrid columns="8" id="panelColumnas">
+                        <p:outputLabel value="#{msg['proyecto.radicado.numero.radicado']}" for="@next"  rendered="#{proyectoRadicadoBB.displayColumnas['NO RADICADO']}" />
+                        <p:inputText id="noRadicado"  value="#{proyectoRadicadoBB.proyectoRadicado.noRadicado}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['NO RADICADO']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.nombre.proyecto']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['NOMBRE PROYECTO']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.nombreProyecto}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['NOMBRE PROYECTO']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.regional']}" for="@next"  rendered="#{proyectoRadicadoBB.displayColumnas['REGIONAL']}" />
+                        <p:selectOneMenu value="#{proyectoRadicadoBB.proyectoRadicado.idRegional}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['REGIONAL']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{proyectoRadicadoBB.regional}" var="regional" itemLabel="#{regional.nombre}" itemValue="#{regional.idRegional}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.fecha.creacion']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['FECHA CREACION']}" />
+                        <p:datePicker value="#{proyectoRadicadoBB.proyectoRadicado.fechaCreacion}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['FECHA CREACION']}" pattern="dd/MM/yyyy" readonlyInput="true" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.fecha.radicacion']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['FECHA RADICACION']}" />
+                        <p:datePicker value="#{proyectoRadicadoBB.proyectoRadicado.fechaRadicacion}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['FECHA RADICACION']}" pattern="dd/MM/yyyy" readonlyInput="true" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.tipo.proyecto']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['TIPO PROYECTO']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.tipoProyecto}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['TIPO PROYECTO']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.cliente.interno']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['CLIENTE INTERNO']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.clienteInterno}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['CLIENTE INTERNO']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.direccion.cliente']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['DIRECCION CLIENTE']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.direccionCliente}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['DIRECCION CLIENTE']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.numero.ot']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['NUMERO OT']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.numeroOt}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['NUMERO OT']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.fecha.creacion.ot']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['FECHA CREACION OT']}" />
+                        <p:datePicker value="#{proyectoRadicadoBB.proyectoRadicado.fechaCreacionOt}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['FECHA CREACION OT']}" pattern="dd/MM/yyyy" readonlyInput="true" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.fecha.estimada.respuesta']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['FECHA ESTIMADA RESPUESTA']}" />
+                        <p:datePicker value="#{proyectoRadicadoBB.proyectoRadicado.fechaEstimadaRespuesta}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['FECHA ESTIMADA RESPUESTA']}" pattern="dd/MM/yyyy" readonlyInput="true" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.radicado.por']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['RADICADO POR']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.radicadoPor}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['RADICADO POR']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.aliado']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['ALIADO']}" />
+                        <p:selectOneMenu value="#{proyectoRadicadoBB.proyectoRadicado.idAliado}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['ALIADO']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{proyectoRadicadoBB.aliado}" var="aliado" itemLabel="#{aliado.nombre}" itemValue="#{aliado.idAliado}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.electrificadora']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['ELECTRIFICADORA']}" />
+                        <p:selectOneMenu value="#{proyectoRadicadoBB.proyectoRadicado.idElectrificadora}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['ELECTRIFICADORA']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{proyectoRadicadoBB.electrificadoras}" var="electrificadora" itemLabel="#{electrificadora.nombre}" itemValue="#{electrificadora.idElectrificadora}" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.tipo']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['TIPO']}" />
+                        <p:selectOneMenu  value="#{proyectoRadicadoBB.proyectoRadicado.tipo}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['TIPO']}" >
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemLabel="AEREO" itemValue="AEREO" />
+                            <f:selectItem itemLabel="SUBTERRANEO" itemValue="SUBTERRANEO" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.direccion.pf1']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['DIRECCION PF1']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.direccionPf1}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['DIRECCION PF1']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.pf1']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['PF1']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.pf1}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['PF1']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.coorx1']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['COORX1']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.coorx1}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['COORX1']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.coory1']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['COORY1']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.coory1}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['COORY1']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.pf2']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['PF2']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.pf2}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['PF2']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.coorx2']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['COORX2']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.coorx2}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['COORX2']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.coory2']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['COORY2']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.coory2}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['COORY2']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.mt']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['MT']}" />
+                        <p:selectOneMenu value="#{proyectoRadicadoBB.proyectoRadicado.mt}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['MT']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemLabel="SI" itemValue="1" />
+                            <f:selectItem itemLabel="NO" itemValue="0" />
+                        </p:selectOneMenu>						
+                        <p:outputLabel value="#{msg['proyecto.radicado.bt']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['BT']}" />
+                        <p:selectOneMenu value="#{proyectoRadicadoBB.proyectoRadicado.bt}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['BT']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemLabel="SI" itemValue="1" />
+                            <f:selectItem itemLabel="NO" itemValue="0" />
+                        </p:selectOneMenu>						
+                        <p:outputLabel value="#{msg['proyecto.radicado.ap']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['AP']}" />
+                        <p:selectOneMenu value="#{proyectoRadicadoBB.proyectoRadicado.ap}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['AP']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemLabel="SI" itemValue="1" />
+                            <f:selectItem itemLabel="NO" itemValue="0" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.alturaPoste']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['ALTURA POSTE']}" />
+                        <p:selectOneMenu value="#{proyectoRadicadoBB.proyectoRadicado.alturaPoste}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['ALTURA POSTE']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemLabel="0" itemValue="0" />
+                            <f:selectItem itemLabel="8" itemValue="8" />
+                            <f:selectItem itemLabel="10" itemValue="10" />
+                            <f:selectItem itemLabel="12" itemValue="12" />
+                            <f:selectItem itemLabel="14" itemValue="14" />
+                            <f:selectItem itemLabel="16" itemValue="16" />
+                            <f:selectItem itemLabel="18" itemValue="18" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.longTramo']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['LONG TRAMO']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.longTramo}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['LONG TRAMO']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.tipo.intervencion']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['TIPO INTERVENCION']}" />
+                        <p:selectOneMenu value="#{proyectoRadicadoBB.proyectoRadicado.tipoIntervencion}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['TIPO INTERVENCION']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemLabel="IN" itemValue="IN" />
+                            <f:selectItem itemLabel="DE" itemValue="DE" />
+                            <f:selectItem itemLabel="AG" itemValue="AG" />
+                            <f:selectItem itemLabel="GA" itemValue="GA" />
+                            <f:selectItem itemLabel="FU" itemValue="FU" />
+                            <f:selectItem itemLabel="IO" itemValue="IO" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.tipoInfra']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['TIPO INFRAESTRUCTURA']}" />
+                        <p:selectOneMenu value="#{proyectoRadicadoBB.proyectoRadicado.tipoInfra}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['TIPO INFRAESTRUCTURA']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemLabel="NUEVO" itemValue="NUEVO" />
+                            <f:selectItem itemLabel="EXISTENTE" itemValue="EXISTENTE" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.diametro.cable']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['DIAMETRO CABLE']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.diametroCable}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['DIAMETRO CABLE']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.tipo.cable']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['TIPO CABLE']}" />
+                        <p:selectOneMenu value="#{proyectoRadicadoBB.proyectoRadicado.tipoCable}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['TIPO CABLE']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemLabel="NO" itemValue="NO" />
+                            <f:selectItem itemLabel="FIBRA OPTICA" itemValue="FIBRA OPTICA" />
+                            <f:selectItem itemLabel="COAXIAL" itemValue="COAXIAL" />
+                            <f:selectItem itemLabel="NEOPRENO" itemValue="NEOPRENO" />
+                            <f:selectItem itemLabel="TRENZADO" itemValue="TRENZADO" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.apoyo.utilizar']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['APOYO UTILIZAR']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.apoyoUtilizar}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['APOYO UTILIZAR']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.diametro.apoyo']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['DIAMETRO APOYO']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.diametroApoyo}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['DIAMETRO APOYO']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.configuracion.apoyo']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['CONFIGURACION APOYO']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.configuracionApoyo}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['CONFIGURACION APOYO']}" />                                                
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.instalacion.reserva']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['INSTALACION RESERVA']}" />
+                        <p:selectOneMenu value="#{proyectoRadicadoBB.proyectoRadicado.instalacionReserva}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['INSTALACION RESERVA']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemLabel="SI" itemValue="SI" />
+                            <f:selectItem itemLabel="NO" itemValue="NO" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.instalacion.elemento.pasivo']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['INSTALACION ELEMENTOS PASIVOS']}" />
+                        <p:selectOneMenu value="#{proyectoRadicadoBB.proyectoRadicado.instalacionElePasivos}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['INSTALACION ELEMENTOS PASIVOS']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItem itemLabel="SI" itemValue="SI" />
+                            <f:selectItem itemLabel="NO" itemValue="NO" />
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.localidad']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['LOCALIDAD']}"  />
+                        <p:selectOneMenu value="#{proyectoRadicadoBB.proyectoRadicado.idLocalidad}" rendered="#{proyectoRadicadoBB.displayColumnas['LOCALIDAD']}"
+                                         filter="true" filterMatchMode="contains">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{proyectoRadicadoBB.localidades}" var="localidades"
+                                           itemLabel="#{localidades.nombre}" itemValue="#{localidades.idLocalidad}"/>
+                            <p:column>
+                                <f:facet name="header">
+                                    <h:outputText value="Nombre"/>
+                                </f:facet>
+                                <h:outputText value="#{localidades.nombre}"/>
+                            </p:column>
+
+                            <f:facet name="footer">
+                                <h:outputText value="#{proyectoRadicadoBB.localidades.size()} Localidades"
+                                              style="font-weight:bold;" styleClass="py-1 block"/>
+                            </f:facet>
+                        </p:selectOneMenu>
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.barrio']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['BARRIO']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.barrio}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['BARRIO']}" />
+
+                        <p:outputLabel value="#{msg['proyecto.radicado.observaciones']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['OBSERVACIONES']}" />
+                        <p:inputText  value="#{proyectoRadicadoBB.proyectoRadicado.observaciones}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['OBSERVACIONES']}" />                                                
+
+                        <p:outputLabel value="#{msg['poste.ducto.estado.radicacion']}" for="@next" rendered="#{proyectoRadicadoBB.displayColumnas['ESTADO']}"  />
+                        <p:selectOneMenu value="#{proyectoRadicadoBB.filtroConsulta.idEstadoRadicacion}" required="true" rendered="#{proyectoRadicadoBB.displayColumnas['ESTADO']}">
+                            <f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+                            <f:selectItems value="#{proyectoRadicadoBB.estadoRadicacion}" var="estadoRadicacion" itemLabel="#{estadoRadicacion.nombre}" itemValue="#{estadoRadicacion.idEstadoRadicacion}" />
+                        </p:selectOneMenu>
+
+                    </p:panelGrid>
+                    <p:commandButton value="#{msg['accion.guardar']}" action="#{proyectoRadicadoBB.actualizar}" icon="pi pi-save"  update="panelForm" styleClass="ui-button-success"/>
+                    <p:spacer height="12px" />
+                    <p:commandButton value="#{msg['accion.cancelar']}" process="@this" oncomplete="PF('dialogoWidget').hide();" styleClass="ui-button-danger" icon="pi pi-times-circle">
+                        <p:resetInput target="dialogo" />
+                    </p:commandButton>
+                </p:outputPanel>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

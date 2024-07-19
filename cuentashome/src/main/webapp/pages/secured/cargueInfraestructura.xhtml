@@ -1,0 +1,41 @@
+<ui:composition template="/pages/template/base_inside.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:define name="titulo">
+		<h:outputText value="#{msg['cargueInfraestructura.titulo']}" />
+	</ui:define>
+
+	<ui:define name="body">
+		<h:form id="panelForm" enctype="multipart/form-data">
+			<p:messages id="formMessages" showDetail="false" closable="true" escape="false">
+				<p:autoUpdate />
+			</p:messages>
+
+			<p:panelGrid styleClass="pg" layout="grid" columns="10" rendered="#{!cargueInfraestructuraBB.renderArchivoError}">
+				<p:card>
+					<p:outputLabel value="#{msg['cargueInfraestructura.archivo']}" styleClass="p12" />
+					<p:spacer height="12px" />
+					<p:fileUpload value="#{cargueInfraestructuraBB.file}" label="#{msg['accion.seleccioneArchivo']}" mode="simple" skinSimple="true" required="true" />
+				
+
+					<p:spacer height="12px" />
+					<p:commandButton id="botonCarga"
+					value="#{msg['accion.archivos.cargar']}" ajax="false"  action="#{cargueInfraestructuraBB.upload}" 
+					 styleClass="ui-button-success" update="panelForm"/>
+				</p:card>
+			</p:panelGrid>
+			<p:panelGrid styleClass="pg" layout="grid" columns="10" rendered="#{cargueInfraestructuraBB.renderArchivoError}">
+				<p:card>
+					 <p:commandButton value="#{msg['accion.descargarErrores']}" ajax="false" rendered="true" icon="pi pi-download" styleClass="ui-button-success">
+						<p:fileDownload value="#{cargueInfraestructuraBB.archivoErrores}" />
+					</p:commandButton>
+					<p:spacer height="12px" />
+					<p:commandButton value="#{msg['accion.cancelar']}" action="#{cargueInfraestructuraBB.cancelar}" update="panelForm" process="@this" styleClass="ui-button-danger" icon="pi pi-times-circle">
+                    	<p:resetInput target="panelForm"/>
+                	</p:commandButton>
+				</p:card>
+			</p:panelGrid>
+		</h:form>
+	</ui:define>
+</ui:composition>

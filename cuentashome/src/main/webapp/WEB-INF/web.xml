@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+         version="3.0">
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+	</servlet>
+	
+	<welcome-file-list>
+		<welcome-file>/pages/inicio.xhtml</welcome-file>
+	</welcome-file-list>
+	<!-- 	<error-page> -->
+	<!-- 		<exception-type>java.lang.Exception</exception-type> -->
+	<!-- 		<location>/pages/error.xhtml</location> -->
+	<!-- 	</error-page> -->
+
+	<!-- Spring Security Filter -->
+	<!-- <filter> -->
+	<!-- <filter-name>springSecurityFilterChain</filter-name> -->
+	<!-- <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class> -->
+	<!-- </filter> -->
+
+	<!-- <filter-mapping> -->
+	<!-- <filter-name>springSecurityFilterChain</filter-name> -->
+	<!-- <url-pattern>/*</url-pattern> -->
+	<!-- </filter-mapping> -->
+	<!-- <listener> -->
+	<!-- <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class> -->
+	<!-- </listener> -->
+
+	<!--listener>
+        <listener-class>co.com.claro.posteducto.web.ParametrosContextListener</listener-class>
+    </listener-->
+
+	<!-- 	<welcome-file-list> -->
+	<!-- 		<welcome-file>/pages/secured/posteducto.xhtml</welcome-file> -->
+	<!-- 	</welcome-file-list> -->
+
+	<error-page>
+		<exception-type>javax.faces.application.ViewExpiredException</exception-type>
+		<location>/pages/inicio.xhtml</location>
+	</error-page>
+</web-app>

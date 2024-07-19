@@ -1,0 +1,92 @@
+<ui:composition template="/pages/template/base_inside.xhtml" xmlns="http://www.w3.org/1999/xhtml" xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" xmlns:h="http://java.sun.com/jsf/html" xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<ui:define name="titulo">
+	<h:outputText value="#{msg['cargueProyectos.titulo']}" />
+</ui:define>
+
+<ui:define name="body" >
+
+	<f:metadata>
+		<f:viewAction action="#{cargueProyectosBB.init}" />
+	</f:metadata>
+	<h:form id="panelForm" enctype="multipart/form-data">
+		<p:messages id="formMessages" showDetail="false" closable="true" escape="false">
+			<p:autoUpdate />
+		</p:messages>
+		
+		<p:card>
+		<p:panelGrid columns="4" layout="grid" rendered="#{!cargueProyectosBB.renderArchivoError}">
+			<p:outputLabel value="#{msg['cargueProyectos.noRadicado']}" for="@next" />
+			<p:inputNumber value="#{cargueProyectosBB.cargue.noRadicado}" minValue="0" decimalPlaces="0" modifyValueOnWheel="false" required="true"/>
+			
+			<p:outputLabel value="#{msg['cargueProyectos.direccionCliente']}" for="@next" />
+			<p:inputText value="#{cargueProyectosBB.cargue.direccionCliente}" />
+			
+			<p:outputLabel value="#{msg['cargueProyectos.nombreProyecto']}" for="@next" />
+			<p:inputText value="#{cargueProyectosBB.cargue.nombreProyecto}" />
+			
+			<p:outputLabel value="#{msg['cargueProyectos.ot']}" for="@next" />
+                        <p:inputText value="#{cargueProyectosBB.cargue.numeroOt}" />
+			
+			<p:outputLabel value="#{msg['cargueProyectos.regional']}" for="@next" />
+                        <p:selectOneMenu value="#{cargueProyectosBB.cargue.idRegional}">
+				<f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+				<f:selectItems value="#{cargueProyectosBB.regionales}" var="item" itemLabel="#{item.nombre}" itemValue="#{item.idRegional}" />
+            </p:selectOneMenu>
+			
+			<p:outputLabel value="#{msg['cargueProyectos.fechaCreacionOt']}" for="@next" />
+			<p:datePicker value="#{cargueProyectosBB.fechaCreacionOt}" readonlyInput="true" />
+			
+			<p:outputLabel value="#{msg['cargueProyectos.fechaCreacion']}" for="@next" />
+			<p:datePicker value="#{cargueProyectosBB.fechaCreacion}" readonlyInput="true" />
+			
+			<p:outputLabel value="#{msg['cargueProyectos.fechaEstimadaRespuesta']}" for="@next" />
+			<p:datePicker value="#{cargueProyectosBB.fechaEstimadaRespuesta}" readonlyInput="true" />
+			
+			<p:outputLabel value="#{msg['cargueProyectos.fechaRadicacion']}" for="@next" />
+			<p:datePicker value="#{cargueProyectosBB.fechaRadicacion}" readonlyInput="true" required="true" />
+			
+			<p:outputLabel value="#{msg['cargueProyectos.radicadoPor']}" for="@next" />
+                        <p:inputText value="#{cargueProyectosBB.cargue.radicadoPor}" required="true" />
+			
+			<p:outputLabel value="#{msg['cargueProyectos.tipoProyecto']}" for="@next" />
+			<p:inputText value="#{cargueProyectosBB.cargue.tipoProyecto}" />
+			
+			<p:outputLabel value="#{msg['cargueProyectos.aliado']}" for="@next" />
+			<p:selectOneMenu value="#{cargueProyectosBB.cargue.idAliado}" required="true">
+				<f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+				<f:selectItems value="#{cargueProyectosBB.aliados}" var="item" itemLabel="#{item.nombre}" itemValue="#{item.idAliado}" />
+                        </p:selectOneMenu>
+			
+			<p:outputLabel value="#{msg['cargueProyectos.clienteInterno']}" for="@next" />
+			<p:inputText value="#{cargueProyectosBB.cargue.clienteInterno}" />
+			
+			<p:outputLabel value="#{msg['cargueProyectos.electrificadora']}" for="@next" />
+			<p:selectOneMenu value="#{cargueProyectosBB.cargue.idElectrificadora}" required="true">
+				<f:selectItem itemLabel="#{msg['item.seleccione']}" itemValue="#{null}" noSelectionOption="true" />
+				<f:selectItems value="#{cargueProyectosBB.electrificadoras}" var="item" itemLabel="#{item.nombre}" itemValue="#{item.idElectrificadora}" />
+                        </p:selectOneMenu>
+			
+			<p:outputLabel value="#{msg['cargueProyectos.archivo']}"  />
+			<p:fileUpload value="#{cargueProyectosBB.file}" label="#{msg['accion.seleccioneArchivo']}" mode="simple" skinSimple="true" required="true" />
+			
+			<p:commandButton value="#{msg['accion.archivos.cargar']}" ajax="false"  action="#{cargueProyectosBB.upload}" 
+			 styleClass="ui-button-success" update="panelForm"/>
+		</p:panelGrid>
+		</p:card>
+		<p:panelGrid styleClass="pg" layout="grid" columns="10" rendered="#{cargueProyectosBB.renderArchivoError}">
+			<p:card>
+				 <p:commandButton value="#{msg['accion.descargarErrores']}" ajax="false" rendered="true" icon="pi pi-download" styleClass="ui-button-success">
+					<p:fileDownload value="#{cargueProyectosBB.archivoErrores}" />
+				</p:commandButton>
+				<p:spacer height="12px" />
+				<p:commandButton value="#{msg['accion.cancelar']}" action="#{cargueProyectosBB.cancelar}" update="panelForm" process="@this" styleClass="ui-button-danger" icon="pi pi-times-circle">
+                   	<p:resetInput target="panelForm"/>
+               	</p:commandButton>
+			</p:card>
+		</p:panelGrid>
+	</h:form>
+</ui:define>
+</ui:composition>

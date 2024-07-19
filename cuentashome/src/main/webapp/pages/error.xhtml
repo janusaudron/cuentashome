@@ -1,0 +1,18 @@
+<ui:composition template="/pages/template/base.xhtml"
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<ui:define name="titulo">
+		<h:outputText value="#{msg['aplicacion.titulo']}" />
+	</ui:define>
+
+	<ui:define name="body">
+		<p:panelGrid layout="grid" columns="1">
+			<p:outputLabel value="#{msg['aplicacion.error.general']}" />
+		</p:panelGrid>
+	</ui:define>
+</ui:composition>

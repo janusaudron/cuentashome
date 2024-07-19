@@ -1,0 +1,21 @@
+.gradiente {
+    background: rgb(2, 0, 36);
+    background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(9, 96, 121, 1) 35%);
+}
+
+.header1 {
+    font-weight: bold;
+}
+
+.header2 {
+    font-weight: bold;
+    color: #91b432;
+}
+
+.titulo .izquierda {
+    float: left
+}
+
+.titulo .derecha {
+    float: right
+}
